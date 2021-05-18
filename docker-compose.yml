@@ -1,0 +1,40 @@
+version: "3.7"
+
+services:
+  nginx:
+    container_name: ${APP_NAME}_nginx
+    build:
+      context: ./.docker/development/nginx
+      dockerfile: nginx.Dockerfile
+    volumes:
+      - ./:/app
+    ports:
+      - "80:80"
+  php-fpm:
+    container_name: ${APP_NAME}_php-fpm
+    build:
+      context: ./.docker/development/php-fpm
+      dockerfile: php-fpm.Dockerfile
+    volumes:
+      - ./:/app
+  mysql:
+    container_name: ${APP_NAME}_mysql
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password --sql_mode=''
+    restart: always
+    volumes:
+      - ./.docker/mysql/data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+  node:
+    container_name: ${APP_NAME}_node
+    image: "node:current"
+    volumes:
+      - ./:/app
+    working_dir: /app
+    tty: true
