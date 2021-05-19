@@ -25,6 +25,14 @@ abstract class ModelEntity
      */
     abstract protected function model(): string;
 
+
+    /**
+     * @return mixed
+     */
+    public function getModel() {
+        return $this->model;
+    }
+
     /**
      * @return array|null
      */

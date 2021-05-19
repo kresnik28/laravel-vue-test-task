@@ -20,10 +20,10 @@ class CreateProductsTable extends Migration
                 $table->integer('external_id');
                 $table->string('brand');
                 $table->string('variant');
-                $table->string('url');
+                $table->text('url');
                 $table->float('price');
                 $table->text('description');
-                $table->dateTime('published_at');
+                $table->bigInteger('published_at');
 
                 $table->timestamps();
             }

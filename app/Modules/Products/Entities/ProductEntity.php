@@ -14,4 +14,9 @@ class ProductEntity extends ModelEntity
     {
         return Product::class;
     }
+
+    public function create($data)
+    {
+        return $this->model->create($data);
+    }
 }

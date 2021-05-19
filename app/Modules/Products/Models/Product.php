@@ -17,8 +17,23 @@ class Product extends Model
      * @var array
      */
     protected $fillable = [
+        'id',
         'external_id',
         'brand',
+        'variant',
+        'url',
+        'price',
+        'description',
+        'published_at'
+    ];
+
+    /**
+     * @var array
+     */
+    public array $mappable = [
+        'external_id',
+        'brand',
+        'variant',
         'url',
         'price',
         'description',

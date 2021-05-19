@@ -1,5 +1,7 @@
 <?php
 
+use App\Modules\Attributes\Controllers\Api\AttributeController;
+use App\Modules\Products\Controllers\Api\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +16,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware('auth:api')->get(
+    '/user',
+    function (Request $request) {
+        return $request->user();
+    }
+);
+
+Route::get('product/mappable-columns', [ProductController::class, 'getMappableColumns']);
+Route::post('product', [ProductController::class, 'storeProductsCsv']);
+
+Route::post('attribute', [AttributeController::class, 'store']);
