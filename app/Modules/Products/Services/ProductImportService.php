@@ -6,10 +6,10 @@ namespace App\Modules\Products\Services;
 
 use App\Modules\Attributes\Entities\AttributeEntity;
 use App\Modules\Products\Entities\ProductEntity;
-use App\Modules\Products\Helpers\ProductHelper;
 use App\Modules\Products\Models\Product;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use League\Csv\Reader;
 
 /**
  * Class ProductImportService
@@ -28,10 +28,6 @@ class ProductImportService
      */
     protected ProductEntity $productEntity;
 
-    /**
-     * @var ProductHelper
-     */
-    protected ProductHelper $productHelper;
     /**
      * @var array
      */
@@ -55,16 +51,13 @@ class ProductImportService
      * ProductImportService constructor.
      * @param AttributeEntity $attributeEntity
      * @param ProductEntity $productEntity
-     * @param ProductHelper $productHelper
      */
     public function __construct(
         AttributeEntity $attributeEntity,
-        ProductEntity $productEntity,
-        ProductHelper $productHelper
+        ProductEntity $productEntity
     ) {
         $this->attributeEntity = $attributeEntity;
         $this->productEntity = $productEntity;
-        $this->productHelper = $productHelper;
     }
 
     /**
@@ -83,7 +76,7 @@ class ProductImportService
     public function importCsv(array $data)
     {
         try {
-            $csv = $this->productHelper->createProductsCsv($data['products_file']);
+            $csv = $this->readCsvFile($data['products_file']);
         } catch (\Exception $ex) {
             return [
                 'success' => false,
@@ -134,6 +127,16 @@ class ProductImportService
             Log::warning($exception);
             return false;
         }
+    }
+
+    /**
+     * @param $file
+     * @return Reader
+     * @throws \League\Csv\Exception
+     */
+    private function readCsvFile($file): Reader
+    {
+        return Reader::createFromFileObject(new \SplFileObject($file))->setHeaderOffset(0);
     }
 
     /**
