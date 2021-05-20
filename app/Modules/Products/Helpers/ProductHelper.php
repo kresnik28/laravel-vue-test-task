@@ -17,25 +17,7 @@ class ProductHelper
 {
 
     /**
-     * @var AttributeEntity
-     */
-    protected AttributeEntity $attributeEntity;
-
-    /**
-     * @var ProductEntity
-     */
-    protected ProductEntity $productEntity;
-
-    /**
-     * ProductHelper constructor.
-     */
-    public function __construct(AttributeEntity $attributeEntity, ProductEntity $productEntity)
-    {
-        $this->attributeEntity = $attributeEntity;
-        $this->productEntity = $productEntity;
-    }
-
-    /**
+     * @param $file
      * @return Reader
      * @throws \League\Csv\Exception
      */
