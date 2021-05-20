@@ -13,13 +13,13 @@
                             <option v-for="colName in columnNames" :value="colName">{{ colName }}</option>
                         </select>
                     </td>
-                    <td>
-                        <button type="button" @click="addNewAttribute()">Add new</button>
-                    </td>
                 </tr>
             </table>
-            <button type="button" @click="saveProducts">Accept</button>
+            <button type="button" @click="addNewAttribute()">Add new attribute</button><br>
+
+            <button type="button" @click="saveProducts">Proceed</button>
         </div>
+        <h3 v-if="loading">Importing products....</h3>
     </form>
 </template>
 
@@ -41,6 +41,7 @@ export default {
             productsFile: null,
             columnNames: [],
             productsMapping: {},
+            loading: false
         }
     },
 
@@ -54,8 +55,12 @@ export default {
 
     methods: {
         saveProducts() {
+            this.loading = true
+
             let formData = new FormData
-            formData.append('mapping_data', JSON.stringify(this.productsMapping))
+            for (let col in this.productsMapping) {
+                formData.append(`mapping_data[${col}]`, this.productsMapping[col])
+            }
             formData.append('products_file', this.productsFile)
 
             axios({
@@ -70,11 +75,15 @@ export default {
                 if (data.data.success) {
                     this.$refs.productsFileInput.value = null
                     this.productsFile = null
-                    alert('Successfully saved')
+                    alert('Successfully saved: ' + data.data.message)
                 } else {
-                    alert('Something went wrong:' + data.message)
+                    alert('Something went wrong: ' + data.data.message)
                 }
-            }).catch(e => console.log(e))
+                this.loading = false
+            }).catch(e => {
+                console.log(e)
+                this.loading = false
+            })
         },
         getMappableColumns() {
             axios.get('api/product/mappable-columns').then((result) => {

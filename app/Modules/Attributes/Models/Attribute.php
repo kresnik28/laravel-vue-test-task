@@ -8,6 +8,10 @@ use App\Modules\Products\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * Class Attribute
+ * @package App\Modules\Attributes\Models
+ */
 class Attribute extends Model
 {
 

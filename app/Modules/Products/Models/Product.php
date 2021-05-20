@@ -8,6 +8,10 @@ use App\Modules\Attributes\Models\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * Class Product
+ * @package App\Modules\Products\Models
+ */
 class Product extends Model
 {
 
@@ -18,19 +22,6 @@ class Product extends Model
      */
     protected $fillable = [
         'id',
-        'external_id',
-        'brand',
-        'variant',
-        'url',
-        'price',
-        'description',
-        'published_at'
-    ];
-
-    /**
-     * @var array
-     */
-    public array $mappable = [
         'external_id',
         'brand',
         'variant',

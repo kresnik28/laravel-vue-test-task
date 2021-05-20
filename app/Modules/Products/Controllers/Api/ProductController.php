@@ -6,6 +6,7 @@ namespace App\Modules\Products\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Products\Helpers\ProductHelper;
+use App\Modules\Products\Services\ProductImportService;
 use App\Modules\Products\Validators\StoreProductsCsv;
 
 /**
@@ -15,24 +16,24 @@ use App\Modules\Products\Validators\StoreProductsCsv;
 class ProductController extends Controller
 {
     /**
-     * @var ProductHelper
+     * @var ProductImportService
      */
-    private ProductHelper $productHelper;
+    private ProductImportService $productImportService;
 
     /**
      * ProductController constructor.
      */
-    public function __construct(ProductHelper $productHelper)
+    public function __construct(ProductImportService $productImportService)
     {
-        $this->productHelper = $productHelper;
+        $this->productImportService = $productImportService;
     }
 
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getMappableColumns()
+    public function getMappableColumns(): \Illuminate\Http\JsonResponse
     {
-        return response()->json($this->productHelper->getAllMappableColumns());
+        return response()->json($this->productImportService->getAllMappableColumns());
     }
 
     /**
@@ -41,17 +42,9 @@ class ProductController extends Controller
      */
     public function storeProductsCsv(StoreProductsCsv $request): \Illuminate\Http\JsonResponse
     {
-        //validating json data
-        $data = json_decode($request->get('mapping_data'), true);
-
-        $validation = (new StoreProductsCsv())->validateDataArray($data);
-
-        if (!$validation['success']) {
-            return response()->json($validation, 422);
-        }
         $data = $request->all();
-        $this->productHelper->createProductsCsv($data);
+        $result = $this->productImportService->importCsv($data);
 
-        return response()->json(['success' => true]);
+        return response()->json($result);
     }
 }

@@ -9,6 +9,10 @@ use App\Modules\Products\Entities\ProductEntity;
 use App\Modules\Products\Models\Product;
 use League\Csv\Reader;
 
+/**
+ * Class ProductHelper
+ * @package App\Modules\Products\Helpers
+ */
 class ProductHelper
 {
 
@@ -32,59 +36,12 @@ class ProductHelper
     }
 
     /**
-     * @return array
+     * @return Reader
+     * @throws \League\Csv\Exception
      */
-    public function getAllMappableColumns()
+    public function createProductsCsv($file): Reader
     {
-        $attributes = $this->attributeEntity->getAllNames();
-        return array_merge($this->productEntity->getModel()->mappable, $attributes);
+        return Reader::createFromFileObject(new \SplFileObject($file))->setHeaderOffset(0);
     }
 
-    /**
-     * @param array $data
-     * @throws \Exception
-     */
-    public function createProductsCsv(array $data)
-    {
-        try {
-            $mapping = json_decode($data['mapping_data'], true);
-            $csv = Reader::createFromFileObject(new \SplFileObject($data['products_file']))->setHeaderOffset(0);
-
-            foreach ($csv as $item) {
-                $product = $this->productEntity->create(
-                    [
-                        'external_id' => $item[$mapping['external_id']],
-                        'brand' => $item[$mapping['brand']],
-                        'variant' => $item[$mapping['variant']],
-                        'url' => $item[$mapping['url']],
-                        'price' => $item[$mapping['price']],
-                        'description' => $item[$mapping['description']],
-                        'published_at' => $item[$mapping['published_at']]
-                    ]
-                );
-
-                $this->setAttributeValues($product, $mapping, $item);
-            }
-        } catch (\Exception $exception) {
-            throw $exception;
-        }
-    }
-
-    /**
-     * @param Product $product
-     * @param array $mapping
-     * @param array $data
-     */
-    private function setAttributeValues(Product $product, array $mapping, array $data)
-    {
-        $attributes = $this->attributeEntity->getAll();
-        $values = [];
-        foreach ($attributes as $attribute) {
-            if (isset($data[$mapping[$attribute->name]])) {
-                $value = $data[$mapping[$attribute->name]];
-                $values[$attribute->id] = ['value' => $value];
-            }
-        }
-        $product->attributeValues()->sync($values);
-    }
 }
